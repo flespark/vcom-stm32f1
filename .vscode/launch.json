@@ -1,0 +1,22 @@
+// Configure debug launch settings
+{
+    "version": "0.2.0",
+    "projectName": "vcom-test",
+    "configurations": [
+        {
+            "name": "swd debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "${workspaceRoot}/build/firmware.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "device": "STM32F103C6",
+            "interface": "swd",
+            "configFiles": [                  
+                "${workspaceRoot}/openocd.cfg"
+            ],
+            "runToEntryPoint": "main",
+            "armToolchainPath": "C:/Users/Administrator/scoop/apps/gcc-arm-none-eabi/current/bin/"
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+--cpu Cortex-M3
+"vcom-stm32f1\startup_stm32f103x6.o"
+"vcom-stm32f1\main.o"
+"vcom-stm32f1\stm32f1xx_it.o"
+"vcom-stm32f1\stm32f1xx_hal_msp.o"
+"vcom-stm32f1\system_stm32f1xx.o"
+"vcom-stm32f1\stm32f1xx_hal_gpio_ex.o"
+"vcom-stm32f1\stm32f1xx_hal_rtc.o"
+"vcom-stm32f1\stm32f1xx_hal_rtc_ex.o"
+"vcom-stm32f1\stm32f1xx_hal.o"
+"vcom-stm32f1\stm32f1xx_hal_rcc.o"
+"vcom-stm32f1\stm32f1xx_hal_rcc_ex.o"
+"vcom-stm32f1\stm32f1xx_hal_gpio.o"
+"vcom-stm32f1\stm32f1xx_hal_dma.o"
+"vcom-stm32f1\stm32f1xx_hal_cortex.o"
+"vcom-stm32f1\stm32f1xx_hal_pwr.o"
+"vcom-stm32f1\stm32f1xx_hal_flash.o"
+"vcom-stm32f1\stm32f1xx_hal_flash_ex.o"
+"vcom-stm32f1\stm32f1xx_hal_exti.o"
+"vcom-stm32f1\stm32f1xx_hal_tim.o"
+"vcom-stm32f1\stm32f1xx_hal_tim_ex.o"
+"vcom-stm32f1\vcom.o"
+"vcom-stm32f1\vcom_interface.o"
+--library_type=microlib --strict --scatter "vcom-stm32f1\vcom-stm32f1.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list "vcom-stm32f1.map" -o vcom-stm32f1\vcom-stm32f1.axf

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "vcom.h": "c",
+        "string.h": "c",
+        "vcom_conf.h": "c"
+    }
+}
