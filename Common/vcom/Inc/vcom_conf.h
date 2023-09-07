@@ -3,8 +3,22 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h> 
+#include <string.h>
 
+/**
+ * @brief Config transmit interface mode
+ *
+ */
+#define VCOM_NONBLOCK   0
+#define VCOM_BLOCK      1
+#define VCOM_FIFO       2
+
+#define VCOM_TANSMIT_MODE VCOM_NONBLOCK
+
+/**
+ * @brief Config frame format
+ *
+ */
 #define VCOM_FRAME_8N1  0   // 8 bits data, none parity, 1 bit stop
 #define VCOM_FRAME_8O1  1
 #define VCOM_FRAME_8E1  2

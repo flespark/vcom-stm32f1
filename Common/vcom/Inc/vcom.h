@@ -16,7 +16,7 @@
 #include "vcom_conf.h"
 
 #if (VCOM_FRAME_FORMAT == VCOM_FRAME_8N1)
-    #define VCOM_FRAME_BITS 9
+    #define VCOM_FRAME_BITS 8
 #elif //TODO
 
 #endif
@@ -38,14 +38,14 @@ typedef struct vcom_handle_s
     uint8_t (*tx_done_callback)(void);  // callback in delay timer irq handler, used carefaully
     uint8_t inited;
     // uint8_t endian;
-    uint8_t tx_done;
+    volatile uint8_t tx_done;
     uint32_t tick;
     uint32_t transfer_ticks;
     char * tx_buf;
     uint32_t tx_buf_len;
     uint8_t encoded_bits;
     uint32_t encoded_bytes;
-    uint8_t frame_index;
+    volatile uint8_t frame_index;
     uint8_t frame[VCOM_FRAME_BITS];      // max 8bits + 1bits parity
 } vcom_handle_t;
 

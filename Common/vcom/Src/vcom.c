@@ -30,6 +30,7 @@ uint8_t vcom_init(vcom_handle_t * handle)
         return 8;
     }
 
+    handle->inited = 1;
     handle->tx_done = 1;    // alse indicate vcom if busy
     return 0;
 }
@@ -39,11 +40,10 @@ uint8_t vcom_frame_encode(vcom_handle_t *handle)
 #if (VCOM_FRAME_FORMAT == VCOM_FRAME_8N1)
     handle->encoded_bits = 0;
     for (uint8_t i = 0; i < VCOM_FRAME_BITS; i++) {
-        handle->frame[i] = handle->tx_buf[handle->encoded_bytes] & (1 << handle->encoded_bits);
+        handle->frame[i] = (handle->tx_buf[handle->encoded_bytes] >> handle->encoded_bits) & 1;
         handle->encoded_bits++;
     }
     handle->encoded_bytes++;
-    handle->frame_index = 0;
 #elif   //TODO: support other frame
 #endif
     return 0;
@@ -74,10 +74,10 @@ uint8_t vcom_tx(vcom_handle_t *handle, char *buf, size_t len)
     handle->encoded_bits = 0;
     handle->encoded_bytes = 0;
     handle->frame_index = 0;
-    memset(handle->frame, 1, VCOM_FRAME_BITS);  // start frame
-
-    handle->tx_gpio_write(0);
+    // memset(handle->frame, 1, VCOM_FRAME_BITS);  // start frame
+    vcom_frame_encode(handle);
     handle->delay_timer_start();
+    handle->tx_gpio_write(0);
     return 0;
 }
 
@@ -95,7 +95,6 @@ void vcom_delay_timer_irq_callback(vcom_handle_t *handle)
         handle->frame_index++;
     } else if (handle->frame_index == VCOM_FRAME_BITS) {
         //TODO: support other frame format
-        handle->frame_index = 1;
         handle->tx_gpio_write(1);
         handle->frame_index++;
     } else {
@@ -110,6 +109,7 @@ void vcom_delay_timer_irq_callback(vcom_handle_t *handle)
                 handle->tx_done_callback();
             }
         }
+        handle->frame_index = 0;
     }
 }
 
@@ -127,6 +127,7 @@ uint8_t vcom_deinit(vcom_handle_t * handle)
         handle->tx_gpio_deinit();
     }
 
+    handle->inited = 0;
     return 0;
 }
 

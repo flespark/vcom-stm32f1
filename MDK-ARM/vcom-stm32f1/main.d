@@ -25,8 +25,6 @@ vcom-stm32f1/main.o: ..\Core\Src\main.c ..\Core\Inc\main.h \
   C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash.h \
   C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_flash_ex.h \
   C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_pwr.h \
-  C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rtc.h \
-  C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_rtc_ex.h \
   C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h \
   C:\Users\Administrator\STM32Cube\Repository\STM32Cube_FW_F1_V1.8.5\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h \
   ..\Common\vcom\Inc\vcom.h \
