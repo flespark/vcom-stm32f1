@@ -1,7 +1,7 @@
 #include "vcom.h"
 #include "vcom_conf.h"
 
-uint8_t vcom_init(vcom_handle_t * handle)
+uint8_t vcom_init(vcom_handle_t * handle, uint32_t baudrate)
 {
     if (handle->inited) {
         return 1;
@@ -15,14 +15,28 @@ uint8_t vcom_init(vcom_handle_t * handle)
     if (handle->tx_gpio_write == NULL) {
         return 4;
     }
+#if (VCOM_TRANSMIT_MODE == VCOM_NONBLOCK) || (VCOM_TRANSMIT_MODE == VCOM_FIFO)
     if (handle->delay_timer_start == NULL) {
         return 5;
     }
     if (handle->delay_timer_stop == NULL) {
         return 6;
     }
+#elif (VCOM_TRANSMIT_MODE == VCOM_BLOCK)
+    if (handle->delay_timer_wait == NULL) {
+        return 5;
+    }
+#endif
 
-    if (handle->delay_timer_init() != 0) {
+    // check if baudrate GT timer clock source frequency or fruency bias GT 5% after division
+    if (baudrate > VCOM_TIMER_CLOCK_SOURCE_FREQ ||
+        (float)(VCOM_TIMER_CLOCK_SOURCE_FREQ % baudrate) / (float)VCOM_TIMER_CLOCK_SOURCE_FREQ > (float)5) {
+        return 9;
+    } else {
+        handle->baudrate = baudrate;
+    }
+
+    if (handle->delay_timer_init(PRESCALER_DIVSION(VCOM_TIMER_CLOCK_SOURCE_FREQ, handle->baudrate)) != 0) {
         return 7;
     }
 
@@ -49,7 +63,7 @@ uint8_t vcom_frame_encode(vcom_handle_t *handle)
     return 0;
 }
 
-uint8_t vcom_tx(vcom_handle_t *handle, char *buf, size_t len)
+uint8_t vcom_transmit(vcom_handle_t *handle, char *buf, size_t len)
 {
     if (handle->inited != 1) {
         return 1;
@@ -76,12 +90,21 @@ uint8_t vcom_tx(vcom_handle_t *handle, char *buf, size_t len)
     handle->frame_index = 0;
     // memset(handle->frame, 1, VCOM_FRAME_BITS);  // start frame
     vcom_frame_encode(handle);
-    handle->delay_timer_start();
     handle->tx_gpio_write(0);
+#if (VCOM_TRANSMIT_MODE == VCOM_NONBLOCK)
+    handle->delay_timer_start();
+#elif (VCOM_TRANSMIT_MODE == VCOM_BLOCK)
+    while (handle->tx_done != 1) {
+        handle->delay_timer_wait();
+        vcom_transfer(handle);
+    }
+#else
+    #error "VCOM_FIFO support under constuction"
+#endif
     return 0;
 }
 
-void vcom_delay_timer_irq_callback(vcom_handle_t *handle)
+void vcom_transfer(vcom_handle_t *handle)
 {
     // if (handle->inited != 1) {
     //     return;
@@ -103,11 +126,13 @@ void vcom_delay_timer_irq_callback(vcom_handle_t *handle)
             vcom_frame_encode(handle);
         } else {
             handle->tx_gpio_write(1);
+#if (VCOM_TRANSMIT_MODE == VCOM_NONBLOCK)
             handle->delay_timer_stop();
-            handle->tx_done = 1;
             if (handle->tx_done_callback != NULL) {
                 handle->tx_done_callback();
             }
+#endif
+            handle->tx_done = 1;
         }
         handle->frame_index = 0;
     }

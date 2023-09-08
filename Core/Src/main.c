@@ -21,6 +21,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
+#include <inttypes.h>
 #include "vcom.h"
 #include "vcom_interface.h"
 #include <stm32f1xx_hal.h>
@@ -90,8 +92,8 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
-  // MX_GPIO_Init();
-  // MX_TIM3_Init();
+  MX_GPIO_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
   HAL_Delay(2000);
 
@@ -99,10 +101,13 @@ int main(void)
   hvcom1.delay_timer_deinit = vcom_interface_timer_deint;
   hvcom1.delay_timer_start = vcom_interface_timer_start;
   hvcom1.delay_timer_stop = vcom_interface_timer_stop;
+//   hvcom1.delay_timer_wait = vcom_interface_timer_wait;
   hvcom1.tx_gpio_init = vcom_interface_tx_gpio_init;
   hvcom1.tx_gpio_deinit = vcom_interface_timer_deint;
   hvcom1.tx_gpio_write = vcom_interface_tx_gpio_wirte;
-  vcom_init(&hvcom1);
+  if (vcom_init(&hvcom1, 9600) != 0) {
+    Error_Handler();
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -110,11 +115,12 @@ int main(void)
   while (1)
   {
       if (hvcom1.tx_done == 1) {
-        msg_len = snprintf(msg, 200, "%u hello\n", HAL_GetTick());
-        vcom_tx(&hvcom1, msg, msg_len);
+        msg_len = snprintf(msg, 200, "%"PRIu32" hello\n", HAL_GetTick());
+        vcom_transmit(&hvcom1, msg, msg_len);
         HAL_Delay(1000);
-    /* USER CODE END WHILE */
       }
+    /* USER CODE END WHILE */
+
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
@@ -149,7 +155,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
-  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV4;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
@@ -236,7 +242,7 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : VCOM_TX_Pin */
   GPIO_InitStruct.Pin = VCOM_TX_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(VCOM_TX_GPIO_Port, &GPIO_InitStruct);
 
@@ -254,7 +260,7 @@ static void MX_GPIO_Init(void)
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == &htim3) {
-        vcom_delay_timer_irq_callback(&hvcom1);
+        vcom_transfer(&hvcom1);
     }
 }
 /* USER CODE END 4 */

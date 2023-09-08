@@ -2,9 +2,11 @@
 #include "vcom_interface.h"
 #include "stm32f1xx_hal.h"
 #include "main.h"
+#include <stm32f1xx_hal_tim.h>
+#include <vcom_conf.h>
 
 
-uint8_t vcom_interface_timer_init(void)
+uint8_t vcom_interface_timer_init(uint32_t prescaler)
 {
     TIM_ClockConfigTypeDef sClockSourceConfig = {0};
     TIM_MasterConfigTypeDef sMasterConfig = {0};
@@ -13,7 +15,7 @@ uint8_t vcom_interface_timer_init(void)
 
     /* USER CODE END TIM21_Init 1 */
     htim3.Instance = TIM3;
-    htim3.Init.Prescaler = 1875;
+    htim3.Init.Prescaler = prescaler;
     htim3.Init.CounterMode = TIM_COUNTERMODE_DOWN;
     htim3.Init.Period = 1;
     htim3.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -55,6 +57,15 @@ uint8_t vcom_interface_timer_start(void)
 uint8_t vcom_interface_timer_stop(void)
 {
     HAL_TIM_Base_Stop_IT(&htim3);
+    return 0;
+}
+
+uint8_t vcom_interface_timer_wait(void)
+{
+    HAL_TIM_Base_Start(&htim3);
+    while (!__HAL_TIM_GET_FLAG(&htim3, TIM_FLAG_UPDATE));
+    __HAL_TIM_CLEAR_FLAG(&htim3, TIM_FLAG_UPDATE);
+    HAL_TIM_Base_Stop(&htim3);
     return 0;
 }
 
