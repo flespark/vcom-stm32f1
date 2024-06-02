@@ -1,9 +1,4 @@
 CompileFlags:
-    Add: [
-        "-isysroot c:/users/08607/scoop/apps/gcc-arm-none-eabi/current/lib/gcc/arm-none-eabi"
-    ]
-    Remove: [--target=arm-none-eabi, -mthumb-interwork]
-    Compiler: arm-none-eabi-gcc
     CompilationDatabase: ./build
 Index:
     StandardLibrary: Yes

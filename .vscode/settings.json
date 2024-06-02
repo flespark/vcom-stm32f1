@@ -1,7 +1,16 @@
 {
-    "files.associations": {
-        "vcom.h": "c",
-        "string.h": "c",
-        "vcom_conf.h": "c"
-    }
+    "cmake.configureArgs": [
+        "-DPROJECT_NAME=${workspaceFolderBasename}"
+    ],
+    "clangd.arguments": [
+        // "--query-driver=C:/Users/08607/scoop/apps/gcc-arm-none-eabi/current/bin",
+        "--clang-tidy",
+        "--completion-style=bundled",
+    ],
+    "C/C++ Include Guard.Auto Include Guard Insertion For New File": true,
+    "C/C++ Include Guard.Macro Type": "Filename",
+    "C/C++ Include Guard.Prefix": "__",
+    "C/C++ Include Guard.Remove Extension": false,
+    "C/C++ Include Guard.Comment Style": "Block",
+    "cortex-debug.variableUseNaturalFormat": false,
 }

@@ -45,7 +45,7 @@ uint8_t vcom_init(vcom_handle_t * handle, uint32_t baudrate)
     }
 
     handle->inited = 1;
-    handle->tx_done = 1;    // alse indicate vcom if busy
+    handle->tx_done = 1;    // also indicate vcom if busy
     return 0;
 }
 

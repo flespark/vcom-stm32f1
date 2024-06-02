@@ -4,7 +4,7 @@
     "projectName": "vcom-test",
     "configurations": [
         {
-            "name": "swd debug",
+            "name": "openocd debug",
             "cwd": "${workspaceRoot}",
             "executable": "${workspaceRoot}/build/firmware.elf",
             "request": "launch",
@@ -12,11 +12,10 @@
             "servertype": "openocd",
             "device": "STM32F103C6",
             "interface": "swd",
-            "configFiles": [                  
-                "${workspaceRoot}/openocd.cfg"
+            "configFiles": [
+                "${workspaceRoot}/Device/openocd.cfg"
             ],
             "runToEntryPoint": "main",
-            "armToolchainPath": "C:/Users/Administrator/scoop/apps/gcc-arm-none-eabi/current/bin/"
         }
     ]
 }

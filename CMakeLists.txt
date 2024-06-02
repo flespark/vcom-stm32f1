@@ -4,8 +4,6 @@ cmake_minimum_required(VERSION 3.12)
 
 include(./gcc-arm-none-eabi.cmake)
 
-set(${PROJECT_NAME} vcom-stm32f1)
-
 # Set project name and some defaults
 if ("${PROJECT_NAME}" STREQUAL "")
     set(PROJECT_NAME firmware)
@@ -49,26 +47,24 @@ set(STM32CUBEMX_INCLUDE_DIRECTORIES
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/${MCU_FAMILY}_HAL_Driver/Inc/Legacy
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Device/ST/${MCU_FAMILY}/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/CMSIS/Include
-    ${CMAKE_CURRENT_SOURCE_DIR}/Common/vcom/Inc)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/vcom/Inc
+    )
 
 set(PROJECT_INCLUDE_DIRECTORIES ${CMAKE_CURRENT_SOURCE_DIR})
 
 file(GLOB_RECURSE STM32CUBEMX_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/Core/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Common/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/*.c)
+    ${CMAKE_CURRENT_SOURCE_DIR}/Drivers/*.c
+    )
 
 set(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/Project)
-file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS
-    ${PROJECT_DIR}/*.c)
 
 add_executable(${EXECUTABLE}
     ${STM32CUBEMX_SOURCES}
-    ${PROJECT_SOURCES}
     ${STARTUP_SCRIPT})
 
 target_compile_definitions(${EXECUTABLE} PRIVATE
-    #$<$<CONFIG:Debug>:DEBUG>
+    $<$<CONFIG:Debug>:DEBUG>
     ${MCU_MODEL}
     USE_HAL_DRIVER)
 
@@ -106,7 +102,6 @@ target_link_options(${EXECUTABLE} PRIVATE
     -Wl,--start-group
     -lc
     -lm
-    -lstdc++
     -Wl,--end-group
     -Wl,--print-memory-usage)
 ###############################################################################
@@ -116,10 +111,3 @@ add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
     COMMAND ${CMAKE_SIZE} $<TARGET_FILE:${EXECUTABLE}>
     COMMAND ${CMAKE_OBJCOPY} -O ihex $<TARGET_FILE:${EXECUTABLE}> ${EXECUTABLE}.hex
     COMMAND ${CMAKE_OBJCOPY} -O binary $<TARGET_FILE:${EXECUTABLE}> ${EXECUTABLE}.bin)
-
-option(DUMP_ASM "Create full assembly of final executable" OFF)
-if (${DUMP_ASM})
-    add_custom_command(TARGET ${EXECUTABLE} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -D -C $<TARGET_FILE:${EXECUTABLE}> > ${EXECUTABLE}.s)
-endif()
-

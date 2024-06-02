@@ -1,17 +1,20 @@
 # See: https://github.com/editorconfig/editorconfig/wiki/EditorConfig-Properties
 root = true
 
-[*.[ch]]
-indent_style = space
-indent_size = 4
-max_line_length = 80
-insert_final_newline = true
-end_of_line = lf
-[*.{cpp,cxx}]
-indent_style = space
-indent_size = 4
-max_line_length = 120
-end_of_line = lf
+# editorconfig can not format existed text
+# use clangd as C formatter
+
+# [*.[ch]]
+# indent_style = space
+# indent_size = 4
+# max_line_length = 80
+# insert_final_newline = true
+# end_of_line = lf
+# [*.{cpp,cxx}]
+# indent_style = space
+# indent_size = 4
+# max_line_length = 120
+# end_of_line = lf
 [*.{json,toml,yaml}]
 indent_style = space
 ident_size = 2
